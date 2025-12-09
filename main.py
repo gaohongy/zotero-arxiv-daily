@@ -157,10 +157,28 @@ if __name__ == '__main__':
     logger.info("Retrieving Zotero corpus...")
     corpus = get_zotero_corpus(args.zotero_id, args.zotero_key)
     logger.info(f"Retrieved {len(corpus)} papers from Zotero.")
+
+    # *********** 新增代码：输出过滤前的文章列表 ***********
+    if corpus:
+        pre_filter_titles = [item.get('data', {}).get('title', 'Untitled') for item in corpus]
+        logger.info("Corpus titles BEFORE filtering:")
+        for title in pre_filter_titles:
+            logger.info(f"- {title}")
+    # *******************************************************
+    
     if args.zotero_ignore:
         logger.info(f"Ignoring papers in:\n {args.zotero_ignore}...")
         corpus = filter_corpus(corpus, args.zotero_ignore)
         logger.info(f"Remaining {len(corpus)} papers after filtering.")
+        
+    # *********** 新增代码：输出过滤后的文章列表 ***********
+        if corpus:
+            post_filter_titles = [item.get('data', {}).get('title', 'Untitled') for item in corpus]
+            logger.info("Corpus titles AFTER filtering:")
+            for title in post_filter_titles:
+                logger.info(f"- {title}")
+    # *******************************************************
+
     logger.info("Retrieving Arxiv papers...")
     papers = get_arxiv_paper(args.arxiv_query, args.debug)
     if len(papers) == 0:
